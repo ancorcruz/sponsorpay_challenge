@@ -9,7 +9,7 @@ module SponsorPay
     end
 
     def fetch_offers params
-      JSON.parse get_offers params
+      JSON.parse(get_offers params)["offers"]
     end
 
     private

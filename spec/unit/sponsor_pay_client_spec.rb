@@ -22,10 +22,10 @@ module SponsorPay
     describe "#fetch_offers" do
       let(:sample_json) { File.read 'spec/assets/sp_response.json' }
 
-      it "receives an OK response" do
+      it "returns fetched offers" do
         client.should_receive(:get_offers).with(raw_params).and_return sample_json
         offers = client.fetch_offers raw_params
-        offers["code"].should be_eql "OK"
+        offers.should have(1).offer
       end
     end
 
