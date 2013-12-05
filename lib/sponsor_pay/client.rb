@@ -9,7 +9,7 @@ module SponsorPay
     end
 
     def fetch_offers params
-      { "code" => "OK" }
+      JSON.parse get_offers params
     end
 
     private
@@ -23,13 +23,10 @@ module SponsorPay
 
       params_str + "&hashkey=#{hashkey}"
     end
+
+    def get_offers raw_params
+      params = prepare_params raw_params
+      open("http://api.sponsorpay.com/feed/v1/offers.json?#{params}").read
+    end
   end
 end
-
-#private
-#
-#  JSON.parse get_offers params
-#def get_offers raw_params
-#  params = prepare_params raw_params
-#  open("http://api.sponsorpay.com/feed/v1/offers.json?#{params}").read
-#end
