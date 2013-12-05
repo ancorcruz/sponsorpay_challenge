@@ -3,6 +3,8 @@ require 'open-uri'
 require 'digest/sha1'
 
 module SponsorPay
+  class InvalidSignature < Exception; end
+
   class Client
     def initialize api_key
       @api_key = api_key
@@ -25,8 +27,17 @@ module SponsorPay
     end
 
     def get_offers raw_params
-      params = prepare_params raw_params
-      open("http://api.sponsorpay.com/feed/v1/offers.json?#{params}").read
+      params   = prepare_params raw_params
+      response = open "http://api.sponsorpay.com/feed/v1/offers.json?#{params}"
+      raise InvalidSignature unless valid_response? response
+      response.read
+    end
+
+    def valid_response? response
+      response_signature  = response.meta["x-sponsorpay-response-signature"]
+      generated_signature = Digest::SHA1.hexdigest(response.read + @api_key)
+
+      response_signature == generated_signature
     end
   end
 end

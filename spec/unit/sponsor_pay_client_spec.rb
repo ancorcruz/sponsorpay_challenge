@@ -27,6 +27,26 @@ module SponsorPay
         offers = client.fetch_offers raw_params
         offers.should have(1).offer
       end
+
+      it "checks response signature" do
+        response = double(:meta => { "x-sponsorpay-response-signature" => "3a3f93a35145ab7b18539910a8537d2286d8d155" },
+                          :read => sample_json)
+        client.stub(:open).and_return response
+        client.should_receive(:valid_response?).with(response).and_return true
+
+        client.fetch_offers raw_params
+      end
+
+      context "when response signature is incorrect" do
+        it "raises an InvalidSignature exception" do
+          response = double(:meta => { "x-sponsorpay-response-signature" => "xxx7766x778xx888x" }, :read => sample_json)
+          client.stub(:open).and_return response
+
+          lambda {
+            client.fetch_offers raw_params
+          }.should raise_exception InvalidSignature
+        end
+      end
     end
 
     describe "#prepare_params" do
