@@ -9,6 +9,7 @@ describe "SponsorPay Offers", type: :feature do
   subject { page }
 
   describe "request offers" do
+    let(:client)     { double("sponsorpay::client") }
     let(:raw_params) {
       {
         "appid"       => "157",
@@ -24,6 +25,7 @@ describe "SponsorPay Offers", type: :feature do
     }
 
     before do
+      SponsorPay::Client.stub(:new).with(kind_of String).and_return client
       fill_in "uid",  with: "player1"
       fill_in "pub0", with: "campaign2"
       fill_in "page", with: "2"
@@ -33,7 +35,7 @@ describe "SponsorPay Offers", type: :feature do
       let(:offers) { JSON.parse(File.read 'spec/assets/sp_response.json')["offers"] }
 
       before do
-        SponsorPay::Client.any_instance.stub(:fetch_offers).with(raw_params).and_return offers
+        client.should_receive(:fetch_offers).with(raw_params).once.and_return offers
         click_button "Submit"
       end
 
@@ -48,7 +50,7 @@ describe "SponsorPay Offers", type: :feature do
       let(:offers) { JSON.parse(File.read 'spec/assets/sp_no_offers_response.json')["offers"] }
 
       before do
-        SponsorPay::Client.any_instance.stub(:fetch_offers).with(raw_params).and_return offers
+        client.should_receive(:fetch_offers).with(raw_params).once.and_return offers
         click_button "Submit"
       end
 
@@ -59,8 +61,7 @@ describe "SponsorPay Offers", type: :feature do
 
     context "with an invalid response signature" do
       before do
-        SponsorPay::Client.any_instance.stub(:open).and_return double("response", read: "", meta: "")
-        SponsorPay::Client.any_instance.stub(:valid_response?).and_return false
+        client.should_receive(:fetch_offers).with(raw_params).once.and_raise SponsorPay::InvalidSignature
         click_button "Submit"
       end
 
