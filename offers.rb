@@ -20,6 +20,10 @@ def request_params
   }
 end
 
+before do
+  expires 600, :private, :must_revalidate
+end
+
 get '/' do
   haml :index
 end
