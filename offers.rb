@@ -26,6 +26,11 @@ end
 
 get '/offers' do
   sanitized_params = params.select { |key, value| ["uid", "pub0", "page"].include?(key) && value }
-  @offers = client.fetch_offers request_params.merge(sanitized_params)
+  begin
+    @offers = client.fetch_offers request_params.merge(sanitized_params)
+  rescue SponsorPay::InvalidSignature
+    @offers = []
+  end
+
   haml :offers
 end
