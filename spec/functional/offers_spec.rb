@@ -22,9 +22,9 @@ describe "SponsorPay Offers", type: :feature do
         "offer_types" => "112",
       }
     }
+    let(:offers) { JSON.parse(File.read 'spec/assets/sp_response.json')["offers"] }
 
     before do
-      offers = JSON.parse(File.read 'spec/assets/sp_response.json')["offers"]
       SponsorPay::Client.any_instance.stub(:fetch_offers).with(raw_params).and_return offers
 
       fill_in "uid",  with: "player1"
@@ -39,7 +39,14 @@ describe "SponsorPay Offers", type: :feature do
       should have_css "img[@src=\"http://cdn.sponsorpay.com/assets/1808/icon175x175-2_square_60.png\"]"
     end
 
-    context "with no offers for sent params"
+    context "with no offers as response" do
+      let(:offers) { JSON.parse(File.read 'spec/assets/sp_no_offers_response.json')["offers"] }
+
+      it "shows a 'No offers' message" do
+        should have_content 'No offers'
+      end
+    end
+
     context "with an invalid response"
   end
 end
