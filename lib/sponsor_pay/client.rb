@@ -27,17 +27,15 @@ module SponsorPay
     end
 
     def get_offers raw_params
-      params   = prepare_params raw_params
-      response = open "http://api.sponsorpay.com/feed/v1/offers.json?#{params}"
-      raise InvalidSignature unless valid_response? response
-      response.read
+      params        = prepare_params raw_params
+      response      = open "http://api.sponsorpay.com/feed/v1/offers.json?#{params}"
+      response_body = response.read
+      raise InvalidSignature unless valid_response? response.meta, response_body
+      response_body
     end
 
-    def valid_response? response
-      response_signature  = response.meta["x-sponsorpay-response-signature"]
-      generated_signature = Digest::SHA1.hexdigest(response.read + @api_key)
-
-      response_signature == generated_signature
+    def valid_response? headers, body
+      headers["x-sponsorpay-response-signature"] == Digest::SHA1.hexdigest(body + @api_key)
     end
   end
 end

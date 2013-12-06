@@ -1,0 +1,16 @@
+!!! 5
+%html
+  %head
+    %title SponsorPay Challenge
+
+  %body
+    #request_offers
+      %form{ action: "/offers", method: 'get' }
+        - ["uid", "pub0", "page"].each do |field|
+          %label{ for: field }= field
+          %input{ type: "text", id: field, name: field, value: params[field] }
+
+        %input{ type: "submit", value: "Submit" }
+
+    #content-wrapper
+      = yield

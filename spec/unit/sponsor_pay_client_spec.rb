@@ -32,7 +32,7 @@ module SponsorPay
         response = double(:meta => { "x-sponsorpay-response-signature" => "3a3f93a35145ab7b18539910a8537d2286d8d155" },
                           :read => sample_json)
         client.stub(:open).and_return response
-        client.should_receive(:valid_response?).with(response).and_return true
+        client.should_receive(:valid_response?).with(response.meta, response.read).and_return true
 
         client.fetch_offers raw_params
       end
