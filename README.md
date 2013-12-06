@@ -5,16 +5,16 @@ SponsorPay Challenge
 
 2. Install bundle gem and run bundle install command:
 
-	```
-	$ gem install bundle
-	$ bundle install
-	```
-	
+  ```
+  $ gem install bundle
+  $ bundle install
+  ```
+
 3. And run with:
 
-	```
-	$ ruby myapp.rb
-	```
+  ```
+  $ ruby offers.rb
+  ```
 
 4. Open ```http://localhost:4567``` in your web browser
 
