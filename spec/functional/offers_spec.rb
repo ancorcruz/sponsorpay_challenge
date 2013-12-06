@@ -44,6 +44,10 @@ describe "SponsorPay Offers", type: :feature do
         should have_content "90"
         should have_css "img[@src=\"http://cdn.sponsorpay.com/assets/1808/icon175x175-2_square_60.png\"]"
       end
+
+      it "caches the page in the browser for 10 minutes with HTTP cache-control" do
+        response_headers["Cache-Control"].should be_eql "private, must-revalidate, max-age=600"
+      end
     end
 
     context "with no offers as response" do
